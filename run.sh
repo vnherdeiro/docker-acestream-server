@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-DOCKER_IMAGE_NAME="magnetikonline/acestream-server"
+DOCKER_IMAGE_NAME="acestr"
 SERVER_HTTP_PORT="6878"
 
 

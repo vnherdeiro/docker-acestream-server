@@ -8,7 +8,7 @@ import signal
 import subprocess
 import sys
 import time
-import urllib2
+import urllib.request as urllib2
 
 DEFAULT_SERVER_HOSTNAME = '127.0.0.1'
 DEFAULT_SERVER_PORT = 6878
@@ -95,7 +95,7 @@ def api_request(uri):
 
 def start_stream(server_hostname,server_port,stream_pid):
 	# build stream UID from PID
-	stream_uid = hashlib.sha1(stream_pid).hexdigest()
+	stream_uid = hashlib.sha1(stream_pid.encode('utf-8')).hexdigest()
 
 	# call API to commence stream
 	response = api_request('http://{0}:{1}/ace/getstream?format=json&sid={2}&id={3}'.format(
