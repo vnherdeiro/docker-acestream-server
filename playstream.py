@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import argparse
 import hashlib
 import json
 import re
@@ -9,6 +8,7 @@ import subprocess
 import sys
 import time
 import urllib.request as urllib2
+import click
 
 DEFAULT_SERVER_HOSTNAME = '127.0.0.1'
 DEFAULT_SERVER_PORT = 6878
@@ -36,58 +36,6 @@ class WatchSigint(object):
 	def sent(self):
 		return WatchSigint._sent
 
-def read_arguments():
-	# create parser
-	parser = argparse.ArgumentParser(
-		description =
-			'Instructs server to commence a given program ID. '
-			'Will optionally execute a local media player once playback has started.'
-	)
-
-	parser.add_argument(
-		'--ace-stream-pid',
-		help = 'program ID to stream',
-		metavar = 'HASH',
-		required = True
-	)
-
-	parser.add_argument(
-		'--player',
-		help = 'media player to execute once stream active',
-	)
-
-	parser.add_argument(
-		'--progress',
-		action = 'store_true',
-		help = 'continue to output stream statistics (connected peers/transfer rates) every {0} seconds'.format(SERVER_POLL_TIME)
-	)
-
-	parser.add_argument(
-		'--server',
-		default = DEFAULT_SERVER_HOSTNAME,
-		help = 'server hostname, defaults to %(default)s',
-		metavar = 'HOSTNAME'
-	)
-
-	parser.add_argument(
-		'--port',
-		default = DEFAULT_SERVER_PORT,
-		help = 'server HTTP API port, defaults to %(default)s',
-	)
-
-	arg_list = parser.parse_args()
-
-	if (not re.search(r'^[a-f0-9]{40}$',arg_list.ace_stream_pid)):
-		exit_error('invalid stream program ID of [{0}] given'.format(arg_list.ace_stream_pid))
-
-	# return arguments
-	return (
-		arg_list.ace_stream_pid,
-		arg_list.player,
-		arg_list.progress,
-		arg_list.server,
-		arg_list.port
-	)
 
 def api_request(uri):
 	response = urllib2.urlopen(uri)
@@ -157,19 +105,21 @@ def stream_progress(watch_sigint,statistics_url):
 
 		time.sleep(SERVER_POLL_TIME)
 
-def main():
-	# read CLI arguments
-	(
-		stream_pid,
-		media_player_bin,
-		progress_follow,
-		server_hostname,
-		server_port
-	) = read_arguments()
+@click.command()
+@click.argument('stream_pid')
+@click.option('--media_player_bin', default='/Applications/VLC.app/Contents/MacOS/VLC',)
+@click.option('--progress_follow', default=True,)
+@click.option('--server_hostname', default=DEFAULT_SERVER_HOSTNAME,)
+@click.option('--server_port', default=DEFAULT_SERVER_PORT,)
+def main(stream_pid, media_player_bin, progress_follow, server_hostname, server_port):
 
 	# create Ctrl-C watcher
 	watch_sigint = WatchSigint()
 
+	# trimming prefix
+	PREFIX ='acestream://' 
+	if stream_pid.startswith(PREFIX):
+		stream_pid = stream_pid[len(PREFIX):]
 	print('Connecting to program ID [{0}]'.format(stream_pid))
 	statistics_url,playback_url = start_stream(server_hostname,server_port,stream_pid)
 
