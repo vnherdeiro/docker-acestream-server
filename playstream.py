@@ -14,7 +14,7 @@ DEFAULT_SERVER_HOSTNAME = '127.0.0.1'
 DEFAULT_SERVER_PORT = 6878
 SERVER_POLL_TIME = 2
 SERVER_STATUS_STREAM_ACTIVE = 'dl'
-
+DEFAULT_VLC_PATH = '/Applications/VLC.app/Contents/MacOS/VLC'
 
 def exit_error(message):
 	sys.stderr.write('Error: {0}\n'.format(message))
@@ -106,8 +106,8 @@ def stream_progress(watch_sigint,statistics_url):
 		time.sleep(SERVER_POLL_TIME)
 
 @click.command()
-@click.argument('stream_pid')
-@click.option('--media_player_bin', default='/Applications/VLC.app/Contents/MacOS/VLC',)
+@click.argument('stream_pid') #passed as first positional argument
+@click.option('--media_player_bin', default=DEFAULT_VLC_PATH,)
 @click.option('--progress_follow', is_flag=True)
 @click.option('--server_hostname', default=DEFAULT_SERVER_HOSTNAME,)
 @click.option('--server_port', default=DEFAULT_SERVER_PORT,)
@@ -120,7 +120,7 @@ def main(stream_pid, media_player_bin, progress_follow, server_hostname, server_
 	PREFIX ='acestream://' 
 	if stream_pid.startswith(PREFIX):
 		stream_pid = stream_pid[len(PREFIX):]
-		
+
 	print('Connecting to program ID [{0}]'.format(stream_pid))
 	statistics_url,playback_url = start_stream(server_hostname,server_port,stream_pid)
 
