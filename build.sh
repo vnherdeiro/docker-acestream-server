@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-DIRNAME=$(dirname "$0")
-DOCKER_IMAGE_NAME="magnetikonline/acestream-server"
+DOCKER_IMAGE_NAME="ace-server"
 
 
-docker build . -t acestr 
+docker build . -t "$DOCKER_IMAGE_NAME"

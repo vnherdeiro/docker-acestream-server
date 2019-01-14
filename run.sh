@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-DOCKER_IMAGE_NAME="acestr"
+DOCKER_IMAGE_NAME="ace-server"
 SERVER_HTTP_PORT="6878"
 
 
