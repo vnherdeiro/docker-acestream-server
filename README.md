@@ -40,21 +40,5 @@ arguments:
                         program ID to stream
 ```
 
-For example, to stream `PROGRAM_ID` and send playback to `vlc` when ready:
-```sh
-$ ./playstream.py \
-	--ace-stream-pid PROGRAM_ID \
-	--player /usr/bin/vlc \
-	--progress
 
-Awaiting successful connection to stream
-Waiting... [Peers: 5 // Down: 80KB // Up: 0KB]
-Waiting... [Peers: 40 // Down: 343KB // Up: 4KB]
-Ready!
-
-Playback available at [http://127.0.0.1/XXXX]
-Starting media player...
-
-Streaming... [Peers: 18 // Down: 467KB // Up: 16KB]
-```
-
+All credits to [magnetikonline](https://github.com/magnetikonline).
